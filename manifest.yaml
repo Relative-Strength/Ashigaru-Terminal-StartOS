@@ -1,0 +1,97 @@
+id: ashigaru
+title: "Ashigaru Terminal"
+version: 1.0.0
+release-notes: |
+  First release of the Ashigaru Terminal built from Sparrow Wallet v1.8.4. The GUI has been removed in favor of a user-friendly terminal interface familiar to Sparrow Server users. 
+  Ashigaru Terminal is a non-custodial Whirlpool client that lets users join chosen pools, enhance their transaction anonymity, and remain fully in control of their funds without needing a Dojo server.
+license: GPLv3
+wrapper-repo: "https://github.com/Relative-Strength/Ashigaru-Terminal-StartOS"
+upstream-repo: "http://ashicodepbnpvslzsl2bz7l2pwrjvajgumgac423pp3y2deprbnzz7id.onion/Ashigaru"
+support-site: "https://ashigaru.rs/contact/"
+marketing-site: "https://ashigaru.rs"
+donation-url: "https://ashigaru.rs/donate/"
+build: ["make"]
+description:
+  short: Ashigaru terminal - Participate in coordinated, Zerolink coinjoins
+  long: |
+    Participate in coordinated, Zerolink coinjoins by interacting with the Ashigaru Whirlpool protocol. Break all deterministic links whilst retaining full control of your coins.
+    Ashigaru Terminal is a non-custodial, dedicated Ashigaru Whirlpool client which allows users to enter pools of their choice and continue to build their forward and backwards anonymity sets whilst being in full control of their funds during every stage of coinjoin cycles. There is no requirement to run your own Dojo server.
+assets:
+  license: LICENSE
+  icon: icon.png
+  instructions: instructions.md
+main:
+  type: docker
+  image: main
+  entrypoint: "docker_entrypoint.sh"
+  args: []
+  mounts:
+    main: /app/data
+  gpu-acceleration: false
+hardware-requirements:
+  arch:
+    - x86_64
+    - aarch64
+health-checks:
+  web-ui:
+    name: Ashigaru Terminal User Interface
+    success-message: Ready to be visited in a web browser
+    type: script
+config: ~
+properties: ~
+volumes:
+  main:
+    type: data
+interfaces:
+  main:
+    name: User Interface
+    description: Ashigaru Terminal Web user interface
+    tor-config:
+      port-mapping:
+        80: "7682"
+    lan-config:
+      443:
+        ssl: true
+        internal: 7682
+    ui: true
+    protocols:
+      - tcp
+      - http
+dependencies: {}
+backup:
+  create:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - duplicity
+      - create
+      - /mnt/backup
+      - /app/data
+    mounts:
+      BACKUP: /mnt/backup
+      main: /app/data
+  restore:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - duplicity
+      - restore
+      - /mnt/backup
+      - /app/data
+    mounts:
+      BACKUP: /mnt/backup
+      main: /app/data
+      ashigaru: /home/ashigaru/.ashigaru
+migrations:
+  from:
+    "*":
+      type: script
+      args: ["from"]
+  to:
+    "*":
+      type: script
+      args: ["to"]
