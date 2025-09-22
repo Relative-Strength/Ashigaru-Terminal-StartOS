@@ -31,7 +31,7 @@ clean:
 	rm -f scripts/*.js
 
 scripts/embassy.js: $(TS_FILES)
-	deno bundle scripts/embassy.ts scripts/embassy.js
+	deno bundle scripts/embassy.ts
 
 docker-images/aarch64.tar: manifest.yaml Dockerfile docker_entrypoint.sh
 ifeq ($(ARCH),x86_64)
