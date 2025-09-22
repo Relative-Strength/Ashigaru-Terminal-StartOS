@@ -27,7 +27,7 @@ RUN useradd -m -u 1000 -s /bin/bash ashigaru
 
 # Bring in artifacts (the workflow fetches these)
 # amd64 .deb is used for both variants; arm64 runs it via qemu + multiarch libs
-COPY artifacts/ashigaru_terminal_v${ASHI_VERSION}_amd64.deb /tmp/ashigaru_amd64.deb
+COPY ./artifacts/ashigaru_terminal_v${ASHI_VERSION}_amd64.deb /tmp/ashigaru_amd64.deb
 
 # Install the amd64 package (works on amd64; on arm64 relies on multiarch)
 RUN set -eux; \
@@ -48,7 +48,7 @@ ENV TERM=xterm-256color \
     TOR_DATADIR=/home/ashigaru/.tor
 
 # Entrypoint
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY ./docker_entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 7682
@@ -59,4 +59,3 @@ WORKDIR /home/ashigaru
 USER ashigaru
 
 ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
-ENTRYPOINT ["/usr/bin/tini","--","/usr/local/bin/docker-entrypoint.sh"]
