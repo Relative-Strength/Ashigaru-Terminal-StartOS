@@ -25,24 +25,29 @@ RUN set -eux; \
 # Create non-root user
 RUN useradd -m -u 1000 -s /bin/bash ashigaru
 
-# Bring in artifacts with stable names
-COPY artifacts/ashigaru.deb /tmp/ashigaru_amd64.deb
-COPY artifacts/signed_hashes.txt /tmp/signed_hashes.txt
+# Bring in artifacts (the workflow fetches these)
+# amd64 .deb is used for both variants; arm64 runs it via qemu + multiarch libs
+COPY artifacts/ashigaru_terminal_v${ASHI_VERSION}_amd64.deb /tmp/ashigaru_amd64.deb
+COPY artifacts/ashigaru_terminal_v${ASHI_VERSION}_signed_hashes.txt /tmp/signed_hashes.txt
 
-# Verify SHA256 (still uses ASHI_VERSION for metadata labels)
+# Verify SHA256 and install the amd64 package (works on amd64; on arm64 relies on qemu+multiarch)
 RUN set -eux; \
+  # Normalize line endings in case the signed file has CRLF
   sed -i 's/\r$//' /tmp/signed_hashes.txt; \
-  # If signed_hashes.txt contains versioned filenames, you can still parse by name:
   NAME="ashigaru_terminal_v${ASHI_VERSION}_amd64.deb"; \
-  # Fallback: if you ship a signed_hashes.txt that matches ashigaru.deb directly, set NAME="ashigaru.deb"
+  # Parse the expected SHA256 from the line after the matching file name
   exp="$(awk -v n="$NAME" '$0 ~ "File name: " n {getline; print $NF; exit}' /tmp/signed_hashes.txt)"; \
-  if [ -z "${exp:-}" ]; then \
-    # Optional fallback if your signed_hashes.txt uses stable names
-    exp="$(awk -v n="ashigaru.deb" '$0 ~ "File name: " n {getline; print $NF; exit}' /tmp/signed_hashes.txt)"; \
+  echo "Expected SHA256 for $NAME: ${exp:-<empty>}"; \
+  if [ -z "${exp:-}" ] || [ "${#exp}" -ne 64 ]; then \
+    echo "Failed to parse a 64-char SHA256 for $NAME from /tmp/signed_hashes.txt" >&2; \
+    echo "Signed file content follows for debugging:" >&2; \
+    cat /tmp/signed_hashes.txt >&2; \
+    exit 1; \
   fi; \
-  [ -n "$exp" ] && [ "${#exp}" -eq 64 ] || { echo "Failed to parse SHA256"; exit 1; }; \
   act="$(sha256sum /tmp/ashigaru_amd64.deb | awk '{print $1}')"; \
-  test "$exp" = "$act"; \
+  echo "Actual SHA256: ${act}"; \
+  test "$exp" = "$act" || { echo "SHA256 mismatch"; exit 1; }; \
+  # Install .deb (on arm64 this relies on qemu-user-static + dpkg multiarch setup done earlier)
   dpkg -i /tmp/ashigaru_amd64.deb || \
     (apt-get update && apt-get -f install -y && rm -rf /var/lib/apt/lists/*); \
   rm -f /tmp/ashigaru_amd64.deb
