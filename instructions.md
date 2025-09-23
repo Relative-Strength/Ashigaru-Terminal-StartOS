@@ -25,17 +25,26 @@ To paste content into the web terminal:
 
 Note: In LibreWolf or Tor Browser, it may be necessary to disable 'resistFingerprinting' for the web terminal to function properly. Alternatively, you can use a Chromium-based browser such as Brave (even over tor).
 
-### Connecting to an Electrum Server
+### Connecting to a remote Electrum Server
 
-To connect to an Electrum server over Tor within Ashigaru Terminal:
+To connect to a remote Electrum server over Tor within Ashigaru Terminal:
 
 *   Enter the server's `.onion` address.
-*   Select the correct Electrum port.
-*   Enable the proxy with the address `127.0.0.1` and port `9050`.
+*   Enter the correct port.
+*   Enable the proxy with the address `embassy` and port `9050`.
+*   Connect
+
+### Connecting to a local Electrum Server
+
+To connect to a local Electrum server (like electrs on start9) within Ashigaru Terminal:
+
+*   Enter the server's local address, if you run electrs it's "electrs.embassy".
+*   Enter the correct port.
+*   Connect.
 
 ### Important Notes
 
-*   **Updates**: Updates may not retain existing wallets. Always back up your seed phrase securely, especially before upgrading or migrating.
+*   **Updates**: Updates may not retain existing wallets. **Always back up your seed phrase securely**, especially before upgrading or migrating.
 *   **Combination with Ashigaru Mobile App**: Ashigaru Terminal is designed to be used in combination with the Ashigaru Mobile App.
 
 **Official Resources**
