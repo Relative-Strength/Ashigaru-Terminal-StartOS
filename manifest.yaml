@@ -71,8 +71,7 @@ backup:
       - /app/data
     mounts:
       BACKUP: /mnt/backup
-      main: /app/data
-      ashigaru: /home/ashigaru/.ashigaru
+      main: /home/ashigaru/.ashigaru
   restore:
     type: docker
     image: compat
@@ -85,8 +84,7 @@ backup:
       - /app/data
     mounts:
       BACKUP: /mnt/backup
-      main: /app/data
-      ashigaru: /home/ashigaru/.ashigaru
+      main: /home/ashigaru/.ashigaru
 migrations:
   from:
     "*":
