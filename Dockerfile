@@ -1,65 +1,6 @@
-FROM ubuntu:22.04 AS buildstage
+FROM ghcr.io/thenymman/ashi-t:latest
 
-ARG ASHI_VERSION=1.0.0
-ARG TARGETARCH
-ENV DEBIAN_FRONTEND=noninteractive
+COPY ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
+RUN chmod +x /usr/local/bin/docker_entrypoint.sh
 
-# Base runtime packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      ca-certificates tmux ttyd tini gosu procps tor torsocks \
-    && rm -rf /var/lib/apt/lists/*
-
-# Enable amd64 multiarch when building the arm64 variant so apt can resolve
-# amd64 dependencies for the upstream .deb. No-op on amd64 builds.
-RUN set -eux; \
-  if [ "${TARGETARCH:-}" = "arm64" ]; then \
-    dpkg --add-architecture amd64; \
-    echo 'APT::Architectures "arm64;amd64";' > /etc/apt/apt.conf.d/00arch; \
-    apt-get update; \
-  fi
-
-# Bring in the pre-downloaded artifact (place it in ./artifacts in your repo)
-COPY ./artifacts/ashigaru_terminal_v${ASHI_VERSION}_amd64.deb /tmp/ashigaru_amd64.deb
-
-# Install the amd64 package (works on amd64; on arm64 relies on multiarch)
-RUN set -eux; \
-  dpkg -i /tmp/ashigaru_amd64.deb || \
-    (apt-get update && apt-get -f install -y); \
-  rm -f /tmp/ashigaru_amd64.deb; \
-  rm -rf /var/lib/apt/lists/*
-
-# Entrypoint script
-COPY ./docker_entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-FROM scratch
-
-# Copy full filesystem from build stage
-COPY --from=buildstage / /
-
-# Runtime env (updated to use /root for StartOS-style persistence)
-ENV TERM=xterm-256color \
-    TMUX_SESSION=ashigaru \
-    PORT=7682 \
-    ASHIGARU_CMD=/opt/ashigaru-terminal/bin/Ashigaru-terminal \
-    TOR_SOCKS_LISTEN=127.0.0.1 \
-    TOR_SOCKS_PORT=9050 \
-    TOR_CONTROL_ENABLE=0 \
-    TOR_CONTROL_LISTEN=127.0.0.1 \
-    TOR_CONTROL_PORT=9051 \
-    TOR_DATADIR=/root/.tor
-
-# Ports
-EXPOSE 7682
-EXPOSE 9050
-EXPOSE 9051
-
-# Runtime: run as root and use /root (matches StartOS manifest mount defaults)
-WORKDIR /root
-USER root
-
-# Use tini as init and launch your entrypoint
-ENTRYPOINT ["/usr/bin/tini","--","/usr/local/bin/docker-entrypoint.sh"]
-
-# Persist app state and Tor state by mounting /root
-VOLUME ["/root"]
+ENTRYPOINT ["/usr/bin/tini","--","/usr/local/bin/docker_entrypoint.sh"]
