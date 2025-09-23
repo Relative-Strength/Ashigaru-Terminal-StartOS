@@ -1,27 +1,22 @@
-############################
-# Stage 1: build/runtime filesystem
-############################
 FROM ubuntu:22.04 AS buildstage
+
 ARG ASHI_VERSION=1.0.0
-
 ARG TARGETARCH
-
 ENV DEBIAN_FRONTEND=noninteractive
+
+# Base runtime packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
       ca-certificates tmux ttyd tini gosu procps tor torsocks \
     && rm -rf /var/lib/apt/lists/*
 
 # Enable amd64 multiarch when building the arm64 variant so apt can resolve
-# amd64 dependencies for the upstream .deb
+# amd64 dependencies for the upstream .deb. No-op on amd64 builds.
 RUN set -eux; \
   if [ "${TARGETARCH:-}" = "arm64" ]; then \
     dpkg --add-architecture amd64; \
     echo 'APT::Architectures "arm64;amd64";' > /etc/apt/apt.conf.d/00arch; \
     apt-get update; \
   fi
-
-# Non-root runtime user
-RUN useradd -m -u 1000 -s /bin/bash ashigaru
 
 # Bring in the pre-downloaded artifact (place it in ./artifacts in your repo)
 COPY ./artifacts/ashigaru_terminal_v${ASHI_VERSION}_amd64.deb /tmp/ashigaru_amd64.deb
@@ -37,18 +32,12 @@ RUN set -eux; \
 COPY ./docker_entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-WORKDIR /home/ashigaru
-USER ashigaru
-
-############################
-# Stage 2: final image (StartOS-style)
-############################
 FROM scratch
 
-# Copy full filesystem from build stage (like the StartOS example)
+# Copy full filesystem from build stage
 COPY --from=buildstage / /
 
-# Runtime env (unchanged behavior)
+# Runtime env (updated to use /root for StartOS-style persistence)
 ENV TERM=xterm-256color \
     TMUX_SESSION=ashigaru \
     PORT=7682 \
@@ -58,19 +47,19 @@ ENV TERM=xterm-256color \
     TOR_CONTROL_ENABLE=0 \
     TOR_CONTROL_LISTEN=127.0.0.1 \
     TOR_CONTROL_PORT=9051 \
-    TOR_DATADIR=/home/ashigaru/.tor
+    TOR_DATADIR=/root/.tor
 
-# Ports (unchanged)
+# Ports
 EXPOSE 7682
 EXPOSE 9050
 EXPOSE 9051
 
-# Runtime user and working directory (re-declared for final image)
-WORKDIR /home/ashigaru
-USER ashigaru
+# Runtime: run as root and use /root (matches StartOS manifest mount defaults)
+WORKDIR /root
+USER root
 
-# Entrypoint (unchanged)
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+# Use tini as init and launch your entrypoint
+ENTRYPOINT ["/usr/bin/tini","--","/usr/local/bin/docker-entrypoint.sh"]
 
-# Optional persistence (recommended)
-VOLUME ["/home/ashigaru"]
+# Persist app state and Tor state by mounting /root
+VOLUME ["/root"]
