@@ -68,7 +68,7 @@ backup:
       - duplicity
       - create
       - /mnt/backup
-      - /app/data
+      - /home/ashigaru/.ashigaru
     mounts:
       BACKUP: /mnt/backup
       main: /home/ashigaru/.ashigaru
@@ -81,7 +81,7 @@ backup:
       - duplicity
       - restore
       - /mnt/backup
-      - /app/data
+      - /home/ashigaru/.ashigaru
     mounts:
       BACKUP: /mnt/backup
       main: /home/ashigaru/.ashigaru
