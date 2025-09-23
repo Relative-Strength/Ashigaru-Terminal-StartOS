@@ -35,7 +35,7 @@ hardware-requirements:
 health-checks:
   web-ui:
     name: Ashigaru Terminal User Interface
-    success-message: Ready to be visited in a web browser
+    success-message: Ready to be visited in a web browser (Read the Instructions First!)
     type: script
 config: ~
 properties: ~
