@@ -1,4 +1,4 @@
-FROM ghcr.io/thenymman/ashi-t:latest
+FROM ghcr.io/relative-strength/ashigaru-terminal-image-startos:latest
 
 COPY --chmod=0755 ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
 
