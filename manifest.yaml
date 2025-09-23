@@ -72,6 +72,7 @@ backup:
     mounts:
       BACKUP: /mnt/backup
       main: /app/data
+      ashigaru: /home/ashigaru/.ashigaru
   restore:
     type: docker
     image: compat
