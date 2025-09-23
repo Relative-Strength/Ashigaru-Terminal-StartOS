@@ -8,6 +8,8 @@ This repository creates the `s9pk` package that is installed to run the [Ashigar
 
 The Docker image used is avaliable [here](https://github.com/Relative-Strength/Ashigaru-terminal-image-startos/pkgs/container/ashigaru-terminal-image-startos). Everything is built in the open.
 
+This has only been tested on x86 machines, and probably does not work on ARM based systems like your old raspberry pi.
+
 Ashigaru Terminal is a privacy-enhanced Bitcoin wallet forked from Sparrow v1.8.4, featuring enhanced privacy capabilities with Nightjar integration and additional privacy-focused functionality. Learn more about service packaging in the [Developer Docs](https://start9.com/latest/developer-docs/).
 
 ## Dependencies
@@ -23,11 +25,11 @@ Install the system dependencies below to build this project by following the ins
 
 ## Cloning
 
-Clone the Webtop package repository locally.
+Clone the package repository locally.
 
 ```
-git clone git@github.com:linkinparkrulz/ashigaru-webtop-startos.git
-cd ashigaru-webtop-startos
+git clone git@github.com:relative-strength/ashigaru-terminal-startos.git
+cd ashigaru-terminal-startos
 ```
 
 ## Building
