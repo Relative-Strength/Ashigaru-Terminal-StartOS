@@ -26,7 +26,7 @@ main:
   entrypoint: "docker_entrypoint.sh"
   args: []
   mounts:
-    main: /home/ashigaru
+    main: /root
   gpu-acceleration: false
 hardware-requirements:
   arch:
@@ -68,10 +68,10 @@ backup:
       - duplicity
       - create
       - /mnt/backup
-      - /home/ashigaru
+      - /root
     mounts:
       BACKUP: /mnt/backup
-      main: /home/ashigaru
+      main: /root
   restore:
     type: docker
     image: compat
@@ -81,10 +81,10 @@ backup:
       - duplicity
       - restore
       - /mnt/backup
-      - /home/ashigaru
+      - /root
     mounts:
       BACKUP: /mnt/backup
-      main: /home/ashigaru
+      main: /root
 migrations:
   from:
     "*":
