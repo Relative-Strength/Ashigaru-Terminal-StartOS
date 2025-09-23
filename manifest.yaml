@@ -26,7 +26,7 @@ main:
   entrypoint: "docker_entrypoint.sh"
   args: []
   mounts:
-    main: /app/data
+    main: /home/ashigaru/.ashigaru
   gpu-acceleration: false
 hardware-requirements:
   arch:
