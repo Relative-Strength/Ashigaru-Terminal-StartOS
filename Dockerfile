@@ -70,7 +70,7 @@ WORKDIR /home/ashigaru
 USER ashigaru
 
 # Entrypoint (unchanged)
-ENTRYPOINT ["/usr/bin/tini","--","/usr/local/bin/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 # Optional persistence (recommended)
-VOLUME /home/ashigaru
+VOLUME ["/home/ashigaru"]
