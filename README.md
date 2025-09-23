@@ -6,6 +6,8 @@
 
 This repository creates the `s9pk` package that is installed to run the [Ashigaru Terminal wallet](https://github.com/Relative-Strength/Ashigaru-Terminal-StartOS) on a stripped down version of `Webtop` on [StartOS](https://github.com/Start9Labs/start-os/). 
 
+The Docker image used is avaliable [here](https://github.com/Relative-Strength/Ashigaru-terminal-image-startos/pkgs/container/ashigaru-terminal-image-startos). Everything is built in the open.
+
 Ashigaru Terminal is a privacy-enhanced Bitcoin wallet forked from Sparrow v1.8.4, featuring enhanced privacy capabilities with Nightjar integration and additional privacy-focused functionality. Learn more about service packaging in the [Developer Docs](https://start9.com/latest/developer-docs/).
 
 ## Dependencies
