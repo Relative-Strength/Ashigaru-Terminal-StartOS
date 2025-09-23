@@ -46,9 +46,24 @@ To connect to a local Electrum server (like electrs on start9) within Ashigaru T
 
 *   **Updates**: Updates may not retain existing wallets. **Always back up your seed phrase securely**, especially before upgrading or migrating.
 *   **Combination with Ashigaru Mobile App**: Ashigaru Terminal is designed to be used in combination with the Ashigaru Mobile App.
-*   If you hit "quit" or "Restart in Testnet4" you will get a Reconnecting error. To fix please restart Ashigaru terminal in the Start9 User interface.
+*   You will not be able to copy a deposit address from Ashigaru Terminal into your clipboard unfortunately. It is reccomended to display a QR instead or copy over the address manually (Triple check you have the right address before depositing)
+*   If you hit Quit by mistake, you will be shown a terminal screen. To return to the wallet simply paste this command and press enter:
+```
+/opt/ashigaru-terminal/bin/Ashigaru-terminal
+```
+*   The proper way to Stop or restart the Application is using the Start9 User Interface
 
-**Official Resources**
+### Using Testnet
+*   If you Hit restart in testnet4, you will be shown a terminal interface. To open in testnet, simply past in this command and press enter:
+```
+/opt/ashigaru-terminal/bin/Ashigaru-terminal -n testnet4
+```
+*   To go back to mainnet just run the same command without -n testnet4 to enter mainnet again. Here is the full mainnet command:
+```
+/opt/ashigaru-terminal/bin/Ashigaru-terminal
+```
+
+**Learning Resources**
 ----------------------
 
 ### Learning Materials
